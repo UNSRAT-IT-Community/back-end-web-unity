@@ -4,6 +4,7 @@ namespace App\Http\Repositories;
 
 use App\Http\Interfaces\UpcomingEventRepositoryInterface;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class UpcomingEventRepository implements UpcomingEventRepositoryInterface
 {
@@ -22,5 +23,20 @@ class UpcomingEventRepository implements UpcomingEventRepositoryInterface
                 'upcoming_events.created_at'
             )
             ->get();
+    }
+
+    public function insertUpcomingEvent($data)
+    {
+        return DB::table('upcoming_events')->insert([
+            'id' => Str::uuid(),
+            'title' => $data['title'],
+            'content' => $data['content'],
+            'start_time' => $data['start_time'],
+            'end_time' => $data['end_time'],
+            'image_url' => $data['image_url'],
+            'creator_id' => $data['creator_id'],
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
     }
 }
