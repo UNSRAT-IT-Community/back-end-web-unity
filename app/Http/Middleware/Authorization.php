@@ -24,7 +24,7 @@ class Authorization
     {
         if ($request->header('Authorization')) {
             try {
-                $publicKey = file_get_contents(base_path('/' . env('JWT_PUBLIC_KEY')));
+                $publicKey = file_get_contents(base_path('public_key.pem'));
 
                 $jwt = explode(' ', $request->header('Authorization'))[1];
                 $claims = JWT::decode($jwt, new Key($publicKey, 'RS256'));
@@ -48,7 +48,7 @@ class Authorization
         return $this->sendUnauthorizedResponse();
     }
 
-    private function sendUnauthorizedResponse($message = 'Invalid Token') {
+    private function sendUnauthorizedResponse($message = 'Token Invalid') {
         return response()->json([
             'status' => Response::HTTP_UNAUTHORIZED,
             'message' => $message,
