@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\DivisionController;
+use App\Http\Controllers\UpcomingEventController;
 use App\Http\Controllers\ValidationController;
 use App\Models\Role;
 use App\Models\User;
@@ -45,6 +46,7 @@ Route::middleware('authorization')->group(function () {
         });
     });
 
+    Route::get('/upcoming-event', [UpcomingEventController::class, 'getAllUpcomingEvents']);
 });
 
 Route::post('/auth/register', [AuthController::class, 'register']);
