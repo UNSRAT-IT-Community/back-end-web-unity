@@ -85,4 +85,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Chatbot::class, 'user_id', 'id');
     }
+
+    /**
+     * Get the role associated with the user.
+     */
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id');
+    }
 }
