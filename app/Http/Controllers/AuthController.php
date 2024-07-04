@@ -110,7 +110,6 @@ class AuthController extends Controller
 
             $data = $request->only($expectedField);
 
-            // Validasi form login
             $validator = Validator::make($data, [
                 'email' => 'required|email',
                 'password' => 'required',
@@ -121,7 +120,6 @@ class AuthController extends Controller
                 'password.required' => "Password tidak boleh kosong",
             ]);
 
-            // Response 422 jika validasi gagal
             if ($validator->fails()) {
                 return $this->sendBadRequestResponse($validator->errors());
             }
@@ -163,10 +161,10 @@ class AuthController extends Controller
     private function generatePairToken($user)
     {
         /** Set TTL
-         * 1 day for auth token
+         * 1 hour for auth token
          * 7 days for default refresh token
          */
-        $accessTokenTTL = $this->ttl(1440);
+        $accessTokenTTL = $this->ttl(60); 
         $refreshTokenTTL = $this->ttl(10080);
 
         $accessTokenPayload = [
