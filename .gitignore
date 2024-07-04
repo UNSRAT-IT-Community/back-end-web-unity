@@ -2,7 +2,7 @@
 /node_modules
 /public/build
 /public/hot
-/public/storage
+# /public/storage
 /storage/*.key
 /vendor
 .env
@@ -18,3 +18,4 @@ yarn-error.log
 /.vscode
 private_key.pem
 public_key.pem
+firebase_credentials.json

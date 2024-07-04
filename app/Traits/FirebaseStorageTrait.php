@@ -13,7 +13,7 @@ trait FirebaseStorageTrait
     public function initializeFirebaseStorage()
     {
         $this->firebaseStorage = (new Factory)
-            ->withServiceAccount(storage_path('app/firebase/firebase_credentials.json'))
+            ->withServiceAccount(base_path('firebase_credentials.json'))
             ->createStorage();
     }
 
