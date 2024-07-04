@@ -7,6 +7,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\DivisionController;
 use App\Http\Controllers\UpcomingEventController;
 use App\Http\Controllers\ValidationController;
+use App\Http\Requests\CreateUpcomingEventRequest; // Import request validation
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Division;
@@ -47,6 +48,7 @@ Route::middleware('authorization')->group(function () {
     });
 
     Route::get('/upcoming-event', [UpcomingEventController::class, 'getAllUpcomingEvents']);
+    Route::post('/upcoming-event', [UpcomingEventController::class, 'create']);
 });
 
 Route::post('/auth/register', [AuthController::class, 'register']);

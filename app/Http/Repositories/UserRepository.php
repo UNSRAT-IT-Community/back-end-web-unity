@@ -31,4 +31,23 @@ class UserRepository implements UserRepositoryInterface
     {
         return User::select($columns)->where('id', $id)->first();
     }
+
+    public function getUserRoleById(string $userId): ?Model
+    {
+        return User::select('role_id')->where('id', $userId)->first();
+    }
+
+    /**
+     * Get role name by role ID, only returns "member", "coordinator", "committee" or null.
+     *
+     * @param string $roleId
+     * @return string|null
+     */
+    public function getRoleNameById(string $roleId): ?string
+    {
+        $role = User::where('role_id', $roleId)->first()->role->name ?? null;
+        $allowedRoles = ['member', 'coordinator', 'committee'];
+
+        return in_array($role, $allowedRoles) ? $role : null;
+    }
 }
