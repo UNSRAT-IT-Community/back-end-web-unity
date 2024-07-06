@@ -21,17 +21,9 @@ class AnnouncementController extends Controller
     {
         try {
             $announcements = $this->announcementRepository->getAllAnnouncements();
-            return response()->json([
-                'status' => 200,
-                'message' => 'Success',
-                'data' => $announcements
-            ]);
+            return $this->sendSuccessResponse($announcements);
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 500,
-                'message' => 'Failed',
-                'error' => $e->getMessage()
-            ]);
+            return $this->sendInternalServerErrorResponse($e);
         }
     }
 
@@ -45,7 +37,7 @@ class AnnouncementController extends Controller
             ]);
 
             $user_data = $GLOBALS['USER_DATA'];
-            
+
             $announcement = Announcement::create([
                 'title' => $request->title,
                 'content' => $request->content,
@@ -53,17 +45,9 @@ class AnnouncementController extends Controller
                 'creator_id' => $user_data->id,
             ]);
 
-            return response()->json([
-                'status' => 200,
-                'message' => 'Success',
-                'data' => $announcement
-            ]);
+            return $this->sendSuccessResponse($announcement, 'Pengumuman berhasil dibuat!');
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 500,
-                'message' => 'Failed',
-                'error' => $e->getMessage()
-            ]);
+            return $this->sendInternalServerErrorResponse($e);
         }
     }
 
@@ -73,38 +57,26 @@ class AnnouncementController extends Controller
             $user_data = $GLOBALS['USER_DATA'];
 
             if ($announcement->creator_id !== $user_data->id) {
-                return response()->json([
-                    'status' => 403,
-                    'message' => 'Forbidden',
-                    'error' => 'Not Authorized'
-                ], 403);
+                return $this->sendForbiddenResponse();
             }
-            
+
             $request->validate([
                 'title' => 'required|string|max:255',
                 'content' => 'required|string',
                 'image_url' => 'nullable|string',
             ]);
-            
+
             $data = [
                 'title' => $request->title,
                 'content' => $request->content,
                 'image_url' => $request->image_url,
             ];
-    
+
             $announcement->update($data);
-    
-            return response()->json([
-                'status' => 200,
-                'message' => 'Success',
-                'data' => $announcement
-            ]);
+
+            return $this->sendSuccessResponse($announcement, 'Pengumuman berhasil diubah!');
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 500,
-                'message' => 'Failed',
-                'error' => $e->getMessage()
-            ]);
+            return $this->sendInternalServerErrorResponse($e);
         }
     }
 
@@ -114,42 +86,22 @@ class AnnouncementController extends Controller
             $user_data = $GLOBALS['USER_DATA'];
 
             if ($announcement->creator_id !== $user_data->id) {
-                return response()->json([
-                    'status' => 403,
-                    'message' => 'Forbidden',
-                    'error' => 'Not Authorized'
-                ], 403);
+                return $this->sendForbiddenResponse();
             }
 
             $announcement->delete();
-            return response()->json([
-                'status' => 200,
-                'message' => 'Success',
-                'data' => $announcement
-            ]);
+            return $this->sendSuccessResponse(null, 'Pengumuman berhasil dihapus!');
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 500,
-                'message' => 'Failed',
-                'error' => $e->getMessage()
-            ]);
+            return $this->sendInternalServerErrorResponse($e);
         }
     }
 
     public function show(Announcement $announcement)
     {
         try {
-            return response()->json([
-                'status' => 200,
-                'message' => 'Success',
-                'data' => $announcement
-            ]);
+            return $this->sendSuccessResponse($announcement);
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 500,
-                'message' => 'Failed',
-                'error' => $e->getMessage()
-            ]);
+            return $this->sendInternalServerErrorResponse($e);
         }
     }
 }
