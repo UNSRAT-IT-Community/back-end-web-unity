@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('content');
             $table->time('start_time');
             $table->time('end_time');
-            $table->string('image_url');
+            $table->text('image_url');
             $table->uuid('creator_id')->references('id')->on('users');
             $table->timestamps();
         });

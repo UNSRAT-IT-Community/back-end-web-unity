@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use GPBMetadata\Google\Api\Http;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class CreateUpcomingEventRequest extends FormRequest
 {
@@ -11,7 +14,7 @@ class CreateUpcomingEventRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +25,39 @@ class CreateUpcomingEventRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'start_time' => 'required|date_format:H:i:s',
+            'end_time' => 'required|date_format:H:i:s|after:start_time',
+            'image' => 'required|image|max:512000',
         ];
+    }
+    
+    public function messages(): array
+    {
+        return [
+            'title.required' => 'Judul event harus diisi.',
+            'title.string' => 'Judul event harus berupa teks.',
+            'title.max' => 'Judul event tidak boleh lebih dari 255 karakter.',
+            'content.required' => 'Konten event harus diisi.',
+            'content.string' => 'Konten event harus berupa teks.',
+            'start_time.required' => 'Waktu mulai event harus diisi.',
+            'start_time.date_format' => 'Format waktu mulai harus HH:mm:ss.',
+            'end_time.required' => 'Waktu selesai event harus diisi.',
+            'end_time.date_format' => 'Format waktu selesai harus HH:mm:ss.',
+            'end_time.after' => 'Waktu selesai harus setelah waktu mulai.',
+            'image.required' => 'Gambar event harus diunggah.',
+            'image.image' => 'File yang diunggah harus berupa gambar.',
+            'image.max' => 'Ukuran gambar tidak boleh lebih dari 1MB.',
+        ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+        'status' => 400,
+        'message' => 'Validasi gagal !',
+        'data'    => $validator->errors()
+        ], 400));
     }
 }

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('galleries', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('photo_url');
+            $table->text('photo_url');
             $table->string('caption');
             $table->uuid('creator_id')->references('id')->on('users');
             $table->timestamps();

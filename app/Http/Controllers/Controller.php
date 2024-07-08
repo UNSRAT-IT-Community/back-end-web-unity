@@ -23,6 +23,15 @@ class Controller extends BaseController
         ], $status);
     }
 
+    protected function sendSuccessCreatedResponse($data = null, $message = 'Sukses'): JsonResponse
+    {
+        return response()->json([
+            'status' => Response::HTTP_CREATED,
+            'message' => $message,
+            'data' => $data
+        ], Response::HTTP_CREATED);
+    }
+
     protected function sendNotFoundResponse($message = 'Tidak ditemukan'): JsonResponse
     {
         return response()->json([

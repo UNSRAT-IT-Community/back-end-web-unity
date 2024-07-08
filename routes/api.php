@@ -52,6 +52,7 @@ Route::middleware('authorization')->group(function () {
     Route::get('/announcements', [AnnouncementController::class, 'index']);
     Route::get('/announcements/{announcement}', [AnnouncementController::class, 'show']);
     Route::get('/upcoming-event', [UpcomingEventController::class, 'getAllUpcomingEvents']);
+    Route::post('/upcoming-event', [UpcomingEventController::class, 'create']);
 });
 
 Route::post('/auth/register', [AuthController::class, 'register']);
