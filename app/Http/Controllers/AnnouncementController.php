@@ -6,6 +6,7 @@ use App\Http\Interfaces\AnnouncementRepositoryInterface;
 use Illuminate\Http\Request;
 use App\Models\Announcement;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Response;
 
 class AnnouncementController extends Controller
 {
@@ -33,19 +34,21 @@ class AnnouncementController extends Controller
             $request->validate([
                 'title' => 'required|string|max:255',
                 'content' => 'required|string',
-                'image_url' => 'nullable|string',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
 
             $user_data = $GLOBALS['USER_DATA'];
 
-            $announcement = Announcement::create([
+            $data = [
                 'title' => $request->title,
                 'content' => $request->content,
-                'image_url' => $request->image_url,
+                'image' => $request->file('image'),
                 'creator_id' => $user_data->id,
-            ]);
+            ];
 
-            return $this->sendSuccessResponse($announcement, 'Pengumuman berhasil dibuat!');
+            $this->announcementRepository->createAnnouncement($data);
+
+            return $this->sendSuccessResponse(null, 'Pengumuman berhasil dibuat!', Response::HTTP_CREATED);
         } catch (\Exception $e) {
             return $this->sendInternalServerErrorResponse($e);
         }
@@ -63,18 +66,18 @@ class AnnouncementController extends Controller
             $request->validate([
                 'title' => 'required|string|max:255',
                 'content' => 'required|string',
-                'image_url' => 'nullable|string',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
 
             $data = [
                 'title' => $request->title,
                 'content' => $request->content,
-                'image_url' => $request->image_url,
+                'image' => $request->file('image'),
             ];
 
-            $announcement->update($data);
+            $updatedAnnouncement = $this->announcementRepository->updateAnnouncement($announcement, $data);
 
-            return $this->sendSuccessResponse($announcement, 'Pengumuman berhasil diubah!');
+            return $this->sendSuccessResponse($updatedAnnouncement, 'Pengumuman berhasil diubah!');
         } catch (\Exception $e) {
             return $this->sendInternalServerErrorResponse($e);
         }
@@ -89,7 +92,7 @@ class AnnouncementController extends Controller
                 return $this->sendForbiddenResponse();
             }
 
-            $announcement->delete();
+            $this->announcementRepository->deleteAnnouncement($announcement);
             return $this->sendSuccessResponse(null, 'Pengumuman berhasil dihapus!');
         } catch (\Exception $e) {
             return $this->sendInternalServerErrorResponse($e);

@@ -14,13 +14,13 @@ use Throwable;
 class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
-    protected function sendSuccessResponse($data = null, $message = 'Sukses'): JsonResponse
+    protected function sendSuccessResponse($data = null, $message = 'Sukses', $status = response::HTTP_OK): JsonResponse
     {
         return response()->json([
-            'status' => Response::HTTP_OK,
+            'status' => $status,
             'message' => $message,
             'data' => $data
-        ], Response::HTTP_OK);
+        ], $status);
     }
 
     protected function sendNotFoundResponse($message = 'Tidak ditemukan'): JsonResponse
