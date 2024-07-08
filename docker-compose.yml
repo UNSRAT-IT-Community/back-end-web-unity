@@ -34,3 +34,6 @@ services:
 networks:
     backend-webunity:
         driver: bridge
+
+volumes:
+  postgres-data:
