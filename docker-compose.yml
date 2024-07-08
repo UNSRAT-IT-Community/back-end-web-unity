@@ -18,12 +18,15 @@ services:
 
     backend-db:
         container_name: backend-db
-        image: mysql:latest
+        image: postgres:16
         environment:
-            MYSQL_DATABASE: laravel
-            MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: unity-db
         ports:
-            - "3306:3306"
+            - "7002:5432"
+        volumes:
+            - postgres-data:/var/lib/postgresql/data
         networks:
             - backend-webunity
         restart: always
