@@ -12,12 +12,12 @@ echo LOG_CHANNEL=stack >> /app/.env
 echo LOG_DEPRECATIONS_CHANNEL=null >> /app/.env
 echo LOG_LEVEL=debug >> /app/.env
 
-echo DB_CONNECTION=mysql >> /app/.env
+echo DB_CONNECTION=pgsql >> /app/.env
 echo DB_HOST=backend-db >> /app/.env
-echo DB_PORT=3306 >> /app/.env
+echo DB_PORT=5432 >> /app/.env
 echo DB_DATABASE=unity-db >> /app/.env
-echo DB_USERNAME=root >> /app/.env
-echo DB_PASSWORD= >> /app/.env
+echo DB_USERNAME=postgres >> /app/.env
+echo DB_PASSWORD=password >> /app/.env
 
 echo BROADCAST_DRIVER=log >> /app/.env
 echo CACHE_DRIVER=file >> /app/.env
