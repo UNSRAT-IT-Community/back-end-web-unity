@@ -1,0 +1,33 @@
+version: "3.8"
+services:
+    backend-app:
+        container_name: backend-app
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "7001:80"
+        env_file:
+            - .env
+        volumes:
+            - .:/app
+        networks:
+            - backend-webunity
+        depends_on:
+            - backend-db
+
+    backend-db:
+        container_name: backend-db
+        image: mysql:latest
+        environment:
+            MYSQL_DATABASE: laravel
+            MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+        ports:
+            - "3306:3306"
+        networks:
+            - backend-webunity
+        restart: always
+
+networks:
+    backend-webunity:
+        driver: bridge
