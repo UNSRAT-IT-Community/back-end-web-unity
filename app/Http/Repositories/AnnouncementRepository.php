@@ -4,20 +4,16 @@ namespace App\Http\Repositories;
 
 use App\Http\Interfaces\AnnouncementRepositoryInterface;
 use App\Models\Announcement;
+use App\Traits\FirebaseStorageTrait;
 use Illuminate\Support\Facades\DB;
-use Kreait\Firebase\Factory;
-use Kreait\Firebase\Storage;
 
 class AnnouncementRepository implements AnnouncementRepositoryInterface
 {
-    protected $firebaseStorage;
+    use FirebaseStorageTrait;
 
     public function __construct()
     {
-        $this->firebaseStorage = (new Factory)
-            ->withServiceAccount(config('services.firebase.credentials'))
-            ->createStorage()
-            ->getBucket(config('services.firebase.storage_bucket'));
+        $this->initializeFirebaseStorage();
     }
 
     public function getAllAnnouncements()
@@ -38,9 +34,15 @@ class AnnouncementRepository implements AnnouncementRepositoryInterface
     public function createAnnouncement(array $data)
     {
         if (isset($data['image'])) {
-            $data['image_url'] = $this->uploadImage($data['image']);
+            $data['image_url'] = $this->uploadImageToFirebase($data['image'], 'announcement');
             unset($data['image']);
         }
+        
+        // Pastikan image_url tidak null
+        if (!isset($data['image_url'])) {
+            $data['image_url'] = '';
+        }
+        
         return Announcement::create($data);
     }
 
@@ -50,40 +52,26 @@ class AnnouncementRepository implements AnnouncementRepositoryInterface
         if (isset($data['image'])) {
             if ($announcement->image_url) {
                 $oldFileName = basename(parse_url($announcement->image_url, PHP_URL_PATH));
-                $this->deleteImage('announcement/' . $oldFileName);
+                $this->firebaseStorage->getBucket()->object('announcement/' . $oldFileName)->delete();
             }
 
-            $data['image_url'] = $this->uploadImage($data['image']);
+            $data['image_url'] = $this->uploadImageToFirebase($data['image'], 'announcement');
             unset($data['image']);
+        }
+
+        if (!isset($data['image_url'])) {
+            $data['image_url'] = $announcement->image_url; // Pertahankan image_url yang lama jika tidak ada gambar baru
         }
 
         $announcement->update($data);
         return $announcement;
     }
 
-    public function uploadImage($file)
-    {
-        $fileName = 'announcement/' . uniqid() . '.' . $file->getClientOriginalExtension();
-        $this->firebaseStorage->upload(file_get_contents($file), [
-            'name' => $fileName,
-        ]);
-
-        return $this->firebaseStorage->object($fileName)->signedUrl(new \DateTime('+100 years'));
-    }
-
-    public function deleteImage($fileName)
-    {
-        $object = $this->firebaseStorage->object($fileName);
-        if ($object->exists()) {
-            $object->delete();
-        }
-    }
-
     public function deleteAnnouncement(Announcement $announcement)
     {
         if ($announcement->image_url) {
-            $fileName = basename(parse_url($announcement->image_url, PHP_URL_PATH));
-            $this->deleteImage('announcement/' . $fileName);
+            $oldFileName = basename(parse_url($announcement->image_url, PHP_URL_PATH));
+            $this->firebaseStorage->getBucket()->object('announcement/' . $oldFileName)->delete();
         }
         return $announcement->delete();
     }

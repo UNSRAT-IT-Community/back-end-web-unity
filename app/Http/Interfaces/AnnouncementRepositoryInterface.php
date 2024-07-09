@@ -10,6 +10,4 @@ interface AnnouncementRepositoryInterface
     public function createAnnouncement(array $data);
     public function updateAnnouncement(Announcement $announcement, array $data);
     public function deleteAnnouncement(Announcement $announcement);
-    public function uploadImage($file);
-    public function deleteImage($fileName);
 }
