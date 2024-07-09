@@ -39,6 +39,8 @@ Route::middleware('authorization')->group(function () {
         Route::get('/anggota', function () {
             return response()->json(['message' => 'Selamat Datang Anggota', 'user' => $GLOBALS['USER_DATA']->name]);
         });
+        Route::get('/announcements', [AnnouncementController::class, 'index']);
+        Route::get('/announcements/{announcement}', [AnnouncementController::class, 'show']);
     });
 
     Route::middleware('pengurus')->group(function () {
@@ -49,8 +51,6 @@ Route::middleware('authorization')->group(function () {
         Route::put('/announcements/{announcement}', [AnnouncementController::class, 'update']);
         Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy']);
     });
-    Route::get('/announcements', [AnnouncementController::class, 'index']);
-    Route::get('/announcements/{announcement}', [AnnouncementController::class, 'show']);
     Route::get('/upcoming-event', [UpcomingEventController::class, 'getAllUpcomingEvents']);
     Route::post('/upcoming-event', [UpcomingEventController::class, 'create']);
 });
