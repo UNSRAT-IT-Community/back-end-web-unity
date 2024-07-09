@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommunityAdController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\DivisionController;
 use App\Http\Controllers\UpcomingEventController;
@@ -35,15 +36,23 @@ Route::middleware('authorization')->group(function () {
         }
     );
 
-    Route::middleware('anggota')->group(function () {
-        Route::get('/anggota', function () {
-            return response()->json(['message' => 'Selamat Datang Anggota', 'user' => $GLOBALS['USER_DATA']->name]);
+    Route::middleware('member')->group(function () {
+        Route::get('/member', function () {
+            return response()->json(['message' => 'Selamat Datang Member', 'user' => $GLOBALS['USER_DATA']->name]);
         });
     });
 
-    Route::middleware('pengurus')->group(function () {
-        Route::get('/pengurus', function () {
-            return response()->json(['message' => 'Selamat Datang Pengurus', 'user' => $GLOBALS['USER_DATA']->name]);
+    Route::middleware('committee')->group(function () {
+        Route::get('/committee', function () {
+            return response()->json(['message' => 'Selamat Datang Committee', 'user' => $GLOBALS['USER_DATA']->name]);
+        });
+
+        Route::resource('communityAd', CommunityAdController::class);
+    });
+
+    Route::middleware('coordinator')->group(function () {
+        Route::get('/coordinator', function () {
+            return response()->json(['message' => 'Selamat Datang Coordinator', 'user' => $GLOBALS['USER_DATA']->name]);
         });
     });
 
