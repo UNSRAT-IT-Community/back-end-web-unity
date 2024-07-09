@@ -47,7 +47,6 @@ Route::middleware('authorization')->group(function () {
             return response()->json(['message' => 'Selamat Datang Committee', 'user' => $GLOBALS['USER_DATA']->name]);
         });
 
-        Route::resource('communityAd', CommunityAdController::class);
     });
 
     Route::middleware('coordinator')->group(function () {
@@ -55,6 +54,9 @@ Route::middleware('authorization')->group(function () {
             return response()->json(['message' => 'Selamat Datang Coordinator', 'user' => $GLOBALS['USER_DATA']->name]);
         });
     });
+
+    Route::get('/communityAd', [CommunityAdController::class, 'index']);
+    Route::get('/communityAd/{communityAd}', [CommunityAdController::class, 'show']);
 
     Route::get('/upcoming-event', [UpcomingEventController::class, 'getAllUpcomingEvents']);
     Route::post('/upcoming-event', [UpcomingEventController::class, 'create']);
