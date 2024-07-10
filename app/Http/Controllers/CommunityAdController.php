@@ -66,9 +66,9 @@ class CommunityAdController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($uuid)
+    public function show($id)
     {
-        $result =  $this->communityAdRepo->getCommunityAdsByUuid($uuid);
+        $result =  $this->communityAdRepo->getCommunityAdsByUuid($id);
         return $this->sendSuccessResponse($result, 'Berhasil mendapatkan Iklan Komunitas');
     }
 
