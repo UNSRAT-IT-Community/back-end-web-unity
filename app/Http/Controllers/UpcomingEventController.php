@@ -96,10 +96,10 @@ class UpcomingEventController extends Controller
         }
     }
 
-    public function getUpcomingEvent($eventId)
+    public function getUpcomingEvent($upcomingEventId)
     {
         try {
-            $event = $this->upcomingEventRepo->getUpcomingEvent($eventId);
+            $event = $this->upcomingEventRepo->getUpcomingEvent($upcomingEventId);
             if (!$event) {
                 return $this->sendNotFoundResponse('Acara mendatang tidak ditemukan');
             }
@@ -109,13 +109,13 @@ class UpcomingEventController extends Controller
         }
     }
 
-    public function update(UpdateUpcomingEventRequest $request, $eventId)
+    public function update(UpdateUpcomingEventRequest $request, $upcomingEventId)
     {
         $creatorId = $this->getUserIdFromToken($request);
 
         $userData = $this->getToken($request);
         $this->validateRoleUser($userData);
-        $event = $this->getUpcomingEventId($eventId);
+        $event = $this->getUpcomingEventId($upcomingEventId);
 
         try {
             $oldImageUrl = $event->image_url;
@@ -131,7 +131,7 @@ class UpcomingEventController extends Controller
                 'image_url' => $newImageUrl
             ];
 
-            $this->upcomingEventRepo->updateUpcomingEvent($eventId, $eventData);
+            $this->upcomingEventRepo->updateUpcomingEvent($upcomingEventId, $eventData);
 
             return $this->sendSuccessResponse(null, 'Berhasil mengubah acara mendatang');
         } catch (\Exception $e) {
@@ -139,19 +139,19 @@ class UpcomingEventController extends Controller
         }
     }
 
-    public function delete(Request $request, $eventId)
+    public function delete(Request $request, $upcomingEventId)
     {
         try {
             $userData = $this->getToken($request);
             $this->validateRoleUser($userData);
-            $event = $this->getUpcomingEventId($eventId);
+            $event = $this->getUpcomingEventId($upcomingEventId);
     
             if ($event->image_url) {
                 $filePath = $this->extractFilePathFromUrl($event->image_url);
                 $this->deleteImageFromFirebase($filePath);
             }
     
-            $this->upcomingEventRepo->deleteUpcomingEvent($eventId);
+            $this->upcomingEventRepo->deleteUpcomingEvent($upcomingEventId);
     
             return $this->sendSuccessResponse(null, 'Berhasil menghapus acara mendatang');
         } catch (\Exception $e) {
@@ -176,9 +176,9 @@ class UpcomingEventController extends Controller
         }
     }
 
-    protected function getUpcomingEventId($eventId)
+    protected function getUpcomingEventId($upcomingEventId)
     {
-        $event = $this->upcomingEventRepo->getUpcomingEvent($eventId);
+        $event = $this->upcomingEventRepo->getUpcomingEvent($upcomingEventId);
         if (!$event) {
             return $this->sendNotFoundResponse('Acara mendatang tidak ditemukan');
         }

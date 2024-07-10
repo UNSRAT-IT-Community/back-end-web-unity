@@ -15,6 +15,7 @@ class CommunityAd extends Model
         'title',
         'content',
         'image_url',
+        'price',
         'creator_id'
     ];
 

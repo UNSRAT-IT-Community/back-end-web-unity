@@ -29,9 +29,9 @@ class UpcomingEventRepository implements UpcomingEventRepositoryInterface
         return $this->fetchDataUpcomingEvent()->get();
     }
 
-    public function getUpcomingEvent($eventId)
+    public function getUpcomingEvent($upcomingEventId)
     {
-        return $this->fetchDataUpcomingEvent()->where('upcoming_events.id', $eventId)->first();
+        return $this->fetchDataUpcomingEvent()->where('upcoming_events.id', $upcomingEventId)->first();
     }
 
     public function insertUpcomingEvent($data)
@@ -49,10 +49,10 @@ class UpcomingEventRepository implements UpcomingEventRepositoryInterface
         ]);
     }
 
-    public function updateUpcomingEvent($eventId, $data)
+    public function updateUpcomingEvent($upcomingEventId, $data)
     {
         return DB::table('upcoming_events')
-            ->where('id', $eventId)
+            ->where('id', $upcomingEventId)
             ->update([
                 'title' => $data['title'],
                 'content' => $data['content'],
@@ -63,9 +63,9 @@ class UpcomingEventRepository implements UpcomingEventRepositoryInterface
             ]);
     }
     
-    public function deleteUpcomingEvent($eventId)
+    public function deleteUpcomingEvent($upcomingEventId)
     {
-        return DB::table('upcoming_events')->where('id', $eventId)->delete();
+        return DB::table('upcoming_events')->where('id', $upcomingEventId)->delete();
     }
     
 }
