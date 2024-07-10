@@ -40,8 +40,8 @@ Route::middleware('authorization')->group(function () {
     Route::post('/upcoming-event', [UpcomingEventController::class, 'create']);
 });
 
-Route::get('/communityAd', [CommunityAdController::class, 'index']);
-Route::get('/communityAd/{communityAd}', [CommunityAdController::class, 'show']);
+Route::get('/community-ads', [CommunityAdController::class, 'index']);
+Route::get('/community-ads/{communityAd}', [CommunityAdController::class, 'show']);
 
 
 
