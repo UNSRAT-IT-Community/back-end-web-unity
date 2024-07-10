@@ -35,10 +35,18 @@ COPY ./docker/nginx/unity.conf /etc/nginx/sites-enabled/unity.conf
 # Copy the start script and make it executable
 RUN cp /app/start.sh /start.sh && chmod +x /start.sh
 
-# Ensure the storage and cache directories exist and set correct permissions
-RUN mkdir -p /app/storage /app/storage/logs /app/bootstrap/cache && \
-    chown -R www-data:www-data /app/storage /app/bootstrap/cache && \
+# Ensure the storage and cache directories exist
+RUN mkdir -p /app/storage/logs /app/bootstrap/cache
+
+# Set permissions for the storage and cache directories
+RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache && \
     chmod -R 775 /app/storage /app/bootstrap/cache
+
+# Debugging: Print directory permissions
+RUN ls -l /app/storage /app/bootstrap
+
+# Switch to www-data user
+USER www-data
 
 # Set the default command to run the start script
 CMD ["/start.sh"]
