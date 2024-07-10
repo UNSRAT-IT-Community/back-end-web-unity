@@ -36,31 +36,14 @@ Route::middleware('authorization')->group(function () {
         }
     );
 
-    Route::middleware('member')->group(function () {
-        Route::get('/member', function () {
-            return response()->json(['message' => 'Selamat Datang Member', 'user' => $GLOBALS['USER_DATA']->name]);
-        });
-    });
-
-    Route::middleware('committee')->group(function () {
-        Route::get('/committee', function () {
-            return response()->json(['message' => 'Selamat Datang Committee', 'user' => $GLOBALS['USER_DATA']->name]);
-        });
-
-    });
-
-    Route::middleware('coordinator')->group(function () {
-        Route::get('/coordinator', function () {
-            return response()->json(['message' => 'Selamat Datang Coordinator', 'user' => $GLOBALS['USER_DATA']->name]);
-        });
-    });
-
-    Route::get('/communityAd', [CommunityAdController::class, 'index']);
-    Route::get('/communityAd/{communityAd}', [CommunityAdController::class, 'show']);
-
     Route::get('/upcoming-event', [UpcomingEventController::class, 'getAllUpcomingEvents']);
     Route::post('/upcoming-event', [UpcomingEventController::class, 'create']);
 });
+
+Route::get('/communityAd', [CommunityAdController::class, 'index']);
+Route::get('/communityAd/{communityAd}', [CommunityAdController::class, 'show']);
+
+
 
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
