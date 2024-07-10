@@ -7,8 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\Role;
 
-
-class Pengurus
+class Coordinator
 {
     /**
      * Handle an incoming request.
@@ -20,7 +19,7 @@ class Pengurus
         $user_role = $GLOBALS['USER_DATA']->role_id;
         $role = Role::find($user_role);
 
-        if($role->name == "Pengurus") return $next($request);
+        if($role->name == "coordinator") return $next($request);
         else return response("Error", Response::HTTP_FORBIDDEN);
     }
 }
