@@ -7,7 +7,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\DivisionController;
 use App\Http\Controllers\UpcomingEventController;
 use App\Http\Controllers\ValidationController;
-use App\Http\Requests\CreateUpcomingEventRequest; // Import request validation
+use App\Http\Controllers\AnnouncementController;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Division;
@@ -39,6 +39,8 @@ Route::middleware('authorization')->group(function () {
         Route::get('/anggota', function () {
             return response()->json(['message' => 'Selamat Datang Anggota', 'user' => $GLOBALS['USER_DATA']->name]);
         });
+        Route::get('/announcements', [AnnouncementController::class, 'index']);
+        Route::get('/announcements/{announcement}', [AnnouncementController::class, 'show']);
     });
 
     Route::middleware('pengurus')->group(function () {
@@ -49,7 +51,6 @@ Route::middleware('authorization')->group(function () {
         Route::put('/upcoming-event/{eventId}',[UpcomingEventController::class, 'update']);
         Route::delete('/upcoming-event/{eventId}',[UpcomingEventController::class, 'delete']);
     });
-
     Route::get('/upcoming-event', [UpcomingEventController::class, 'getAllUpcomingEvents']);
     Route::get('/upcoming-event/{eventId}', [UpcomingEventController::class, 'getUpcomingEvent']);
 
