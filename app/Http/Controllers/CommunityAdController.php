@@ -5,14 +5,46 @@ namespace App\Http\Controllers;
 use App\Models\CommunityAd;
 use Illuminate\Http\Request;
 use App\Http\Interfaces\CommunityAdsInterface;
+use App\Http\Repositories\UserRepository;
+use App\Traits\FirebaseStorageTrait;
+use App\Traits\TokenTrait;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+use App\Http\Requests\CreateCommunityAdRequest;
 
 class CommunityAdController extends Controller
 {
-    protected $communityAdRepo;
+    use FirebaseStorageTrait, TokenTrait;
 
-    public function __construct(CommunityAdsInterface $communityAdRepo)
+    protected $communityAdRepo;
+    protected $firebaseStorage;
+    protected $userRepository;
+
+    public function __construct(CommunityAdsInterface $communityAdRepo, UserRepository $userRepository)
     {
         $this->communityAdRepo = $communityAdRepo;
+        $this->userRepository = $userRepository;
+        $this->initializeFirebaseStorage();
+    }
+
+    public function getUserIdFromToken(Request $request)
+    {
+        $token = $request->bearerToken();
+        $publicKey = file_get_contents(base_path('public_key.pem'));
+
+        try {
+            $decoded = JWT::decode($token, new Key($publicKey, 'RS256'));
+            if (isset($decoded->data->id)) {
+                return $decoded->data->id;
+            }
+
+            throw new \Exception("Token tidak valid !");
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 401);
+        }
     }
     /**
      * Display a listing of the resource.
@@ -24,27 +56,19 @@ class CommunityAdController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateCommunityAdRequest $request)
     {
-        //
+
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(CommunityAd $communityAd)
+    public function show($uuid)
     {
-        $result =  $this->communityAdRepo->getCommunityAdsByUuid($communityAd->id);
+        $result =  $this->communityAdRepo->getCommunityAdsByUuid($uuid);
         return $this->sendSuccessResponse($result, 'Berhasil mendapatkan Iklan Komunitas');
     }
 

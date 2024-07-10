@@ -45,7 +45,7 @@ Route::middleware('authorization')->group(function () {
 });
 
 Route::get('/community-ads', [CommunityAdController::class, 'index']);
-Route::get('/community-ads/{communityAd}', [CommunityAdController::class, 'show']);
+Route::get('/community-ads/{uuid}', [CommunityAdController::class, 'show']);
 
 Route::get('/announcements', [AnnouncementController::class, 'index']);
 Route::get('/announcements/{announcement}', [AnnouncementController::class, 'show']);
