@@ -20,7 +20,7 @@ class UserController extends Controller
     public function index ()
     {
         try {
-            $users = $this->userRepository->getUserData();
+            $users = $this->userRepository->getUserDataByRole();
             return $this->sendSuccessResponse($users);
         } catch (\Exception $e) {
             return $this->sendInternalServerErrorResponse($e);

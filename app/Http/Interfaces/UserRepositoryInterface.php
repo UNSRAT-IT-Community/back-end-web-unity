@@ -26,5 +26,5 @@ interface UserRepositoryInterface
     public function getUserRoleById(string $userId): ?Model;
     public function getRoleNameById(string $roleId): ?string;
 
-    public function getUserData();
+    public function getUserDataByRole();
 }

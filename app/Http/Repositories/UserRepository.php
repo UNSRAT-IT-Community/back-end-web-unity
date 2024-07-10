@@ -52,7 +52,7 @@ class UserRepository implements UserRepositoryInterface
         return in_array($role, $allowedRoles) ? $role : null;
     }
 
-    public function getUserData()
+    public function getUserDataByRole()
     {
         return DB::table('users')
             ->join('roles', 'users.role_id', '=', 'roles.id')
