@@ -45,10 +45,14 @@ Route::middleware('authorization')->group(function () {
         Route::get('/pengurus', function () {
             return response()->json(['message' => 'Selamat Datang Pengurus', 'user' => $GLOBALS['USER_DATA']->name]);
         });
+        Route::post('/upcoming-event', [UpcomingEventController::class, 'create']);
+        Route::put('/upcoming-event/{eventId}',[UpcomingEventController::class, 'update']);
+        Route::delete('/upcoming-event/{eventId}',[UpcomingEventController::class, 'delete']);
     });
 
     Route::get('/upcoming-event', [UpcomingEventController::class, 'getAllUpcomingEvents']);
-    Route::post('/upcoming-event', [UpcomingEventController::class, 'create']);
+    Route::get('/upcoming-event/{eventId}', [UpcomingEventController::class, 'getUpcomingEvent']);
+
 });
 
 Route::post('/auth/register', [AuthController::class, 'register']);

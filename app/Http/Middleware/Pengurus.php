@@ -20,7 +20,7 @@ class Pengurus
         $user_role = $GLOBALS['USER_DATA']->role_id;
         $role = Role::find($user_role);
 
-        if($role->name == "Pengurus") return $next($request);
+        if($role->name == "committee") return $next($request);
         else return response("Error", Response::HTTP_FORBIDDEN);
     }
 }

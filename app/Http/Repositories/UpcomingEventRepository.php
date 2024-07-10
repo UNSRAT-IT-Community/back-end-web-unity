@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class UpcomingEventRepository implements UpcomingEventRepositoryInterface
 {
-    public function getAllUpcomingEvents()
+    protected function fetchDataUpcomingEvent()
     {
         return DB::table('upcoming_events')
             ->join('users', 'upcoming_events.creator_id', '=', 'users.id')
@@ -21,8 +21,17 @@ class UpcomingEventRepository implements UpcomingEventRepositoryInterface
                 'upcoming_events.image_url',
                 'users.name as creator_name',
                 'upcoming_events.created_at'
-            )
-            ->get();
+            );
+    }
+
+    public function getAllUpcomingEvents()
+    {
+        return $this->fetchDataUpcomingEvent()->get();
+    }
+
+    public function getUpcomingEvent($eventId)
+    {
+        return $this->fetchDataUpcomingEvent()->where('upcoming_events.id', $eventId)->first();
     }
 
     public function insertUpcomingEvent($data)
@@ -39,4 +48,24 @@ class UpcomingEventRepository implements UpcomingEventRepositoryInterface
             'updated_at' => now()
         ]);
     }
+
+    public function updateUpcomingEvent($eventId, $data)
+    {
+        return DB::table('upcoming_events')
+            ->where('id', $eventId)
+            ->update([
+                'title' => $data['title'],
+                'content' => $data['content'],
+                'start_time' => $data['start_time'],
+                'end_time' => $data['end_time'],
+                'image_url' => $data['image_url'],
+                'updated_at' => now(),
+            ]);
+    }
+    
+    public function deleteUpcomingEvent($eventId)
+    {
+        return DB::table('upcoming_events')->where('id', $eventId)->delete();
+    }
+    
 }

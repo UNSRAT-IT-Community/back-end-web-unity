@@ -2,20 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Interfaces\UpcomingEventRepositoryInterface;
-use App\Http\Requests\CreateUpcomingEventRequest;
-use App\Http\Repositories\UserRepository;
-use App\Traits\FirebaseStorageTrait;
-use App\Traits\TokenTrait; // Import the new TokenTrait
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use App\Models\Chatbot;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use GuzzleHttp\Promise\Create;
+use Illuminate\Support\Facades\Log;
+use App\Traits\FirebaseStorageTrait;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Repositories\UserRepository;
+use App\Http\Requests\CreateUpcomingEventRequest;
+use App\Http\Requests\UpdateUpcomingEventRequest;
+use App\Traits\TokenTrait; // Import the new TokenTrait
+use App\Http\Interfaces\UpcomingEventRepositoryInterface;
 
 class UpcomingEventController extends Controller
 {
-    use FirebaseStorageTrait, TokenTrait; 
+    use FirebaseStorageTrait, TokenTrait;
 
     protected $upcomingEventRepo;
     protected $firebaseStorage;
@@ -25,7 +29,7 @@ class UpcomingEventController extends Controller
     {
         $this->upcomingEventRepo = $upcomingEventRepo;
         $this->userRepository = $userRepository;
-        $this->initializeFirebaseStorage(); 
+        $this->initializeFirebaseStorage();
     }
 
     public function getUserIdFromToken(Request $request)
@@ -51,16 +55,8 @@ class UpcomingEventController extends Controller
     public function create(CreateUpcomingEventRequest $request)
     {
         $creatorId = $this->getUserIdFromToken($request);
-
-        $userData = $this->decodeToken($request);
-        if (!$userData) {
-            return $this->sendUnauthorizedResponse('Token tidak valid atau telah kadaluarsa');
-        }
-
-        $roleName = $this->userRepository->getRoleNameById($userData->role_id);
-        if ($roleName === 'member') {
-            return $this->sendForbiddenResponse('User tidak memiliki hak untuk menambah postingan acara mendatang');
-        }
+        $userData = $this->getToken($request);
+        $this->validateRoleUser($userData);
 
         if (!$request->hasFile('image') && empty($request->content)) {
             return response()->json([
@@ -69,8 +65,8 @@ class UpcomingEventController extends Controller
                 'data' => null
             ], 413);
         }
-
         try {
+
             $imageUrl = $this->uploadImageToFirebase($request->file('image'), 'upcoming-event');
 
             $eventData = [
@@ -99,4 +95,95 @@ class UpcomingEventController extends Controller
             return $this->sendInternalServerErrorResponse($e);
         }
     }
+
+    public function getUpcomingEvent($eventId)
+    {
+        try {
+            $event = $this->upcomingEventRepo->getUpcomingEvent($eventId);
+            if (!$event) {
+                return $this->sendNotFoundResponse('Acara mendatang tidak ditemukan');
+            }
+            return $this->sendSuccessResponse($event, 'Berhasil mendapatkan detail acara mendatang');
+        } catch (\Exception $e) {
+            return $this->sendInternalServerErrorResponse($e);
+        }
+    }
+
+    public function update(UpdateUpcomingEventRequest $request, $eventId)
+    {
+        $creatorId = $this->getUserIdFromToken($request);
+
+        $userData = $this->getToken($request);
+        $this->validateRoleUser($userData);
+        $event = $this->getUpcomingEventId($eventId);
+
+        try {
+            $oldImageUrl = $event->image_url;
+            $oldFilePath = $this->extractFilePathFromUrl($oldImageUrl);
+            $this->deleteImageFromFirebase($oldFilePath);
+            $newImageUrl = $request->hasFile('image') ? $this->uploadImageToFirebase($request->file('image'), 'upcoming-event', $oldImageUrl) : $oldImageUrl;
+
+            $eventData = [
+                'title' => $request->input("title"),
+                'content' => $request->input("content"),
+                'start_time' => $request->input("start_time"),
+                'end_time' => $request->input("end_time"),
+                'image_url' => $newImageUrl
+            ];
+
+            $this->upcomingEventRepo->updateUpcomingEvent($eventId, $eventData);
+
+            return $this->sendSuccessResponse(null, 'Berhasil mengubah acara mendatang');
+        } catch (\Exception $e) {
+            return $this->sendValidationErrorResponse($e->getMessage());
+        }
+    }
+
+    public function delete(Request $request, $eventId)
+    {
+        try {
+            $userData = $this->getToken($request);
+            $this->validateRoleUser($userData);
+            $event = $this->getUpcomingEventId($eventId);
+    
+            if ($event->image_url) {
+                $filePath = $this->extractFilePathFromUrl($event->image_url);
+                $this->deleteImageFromFirebase($filePath);
+            }
+    
+            $this->upcomingEventRepo->deleteUpcomingEvent($eventId);
+    
+            return $this->sendSuccessResponse(null, 'Berhasil menghapus acara mendatang');
+        } catch (\Exception $e) {
+            return $this->sendInternalServerErrorResponse($e);
+        }
+    }
+    
+    protected function getToken($request)
+    {
+        $userData = $this->decodeToken($request);
+        if (!$userData) {
+            return $this->sendUnauthorizedResponse('Token tidak valid atau telah kadaluarsa');
+        }
+        return $userData;
+    }
+
+    protected function validateRoleUser($userData)
+    {
+        $roleName = $this->userRepository->getRoleNameById($userData->role_id);
+        if ($roleName === 'member') {
+            return $this->sendForbiddenResponse('User tidak memiliki hak untuk mengubah postingan acara mendatang');
+        }
+    }
+
+    protected function getUpcomingEventId($eventId)
+    {
+        $event = $this->upcomingEventRepo->getUpcomingEvent($eventId);
+        if (!$event) {
+            return $this->sendNotFoundResponse('Acara mendatang tidak ditemukan');
+        }
+        return $event;
+    }
+
+
 }
