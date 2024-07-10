@@ -8,9 +8,8 @@ use App\Http\Controllers\DivisionController;
 use App\Http\Controllers\UpcomingEventController;
 use App\Http\Controllers\ValidationController;
 use App\Http\Controllers\AnnouncementController;
-use App\Models\Role;
-use App\Models\User;
-use App\Models\Division;
+use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +49,7 @@ Route::middleware('authorization')->group(function () {
         Route::post('/announcements', [AnnouncementController::class, 'store']);
         Route::put('/announcements/{announcement}', [AnnouncementController::class, 'update']);
         Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy']);
+        Route::get('/users', [UserController::class, 'index']);
     });
     Route::get('/upcoming-event', [UpcomingEventController::class, 'getAllUpcomingEvents']);
     Route::post('/upcoming-event', [UpcomingEventController::class, 'create']);

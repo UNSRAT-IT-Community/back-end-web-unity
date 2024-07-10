@@ -6,6 +6,7 @@ use App\Http\Interfaces\UserRepositoryInterface;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -49,5 +50,22 @@ class UserRepository implements UserRepositoryInterface
         $allowedRoles = ['member', 'coordinator', 'committee'];
 
         return in_array($role, $allowedRoles) ? $role : null;
+    }
+
+    public function getUserData()
+    {
+        return DB::table('users')
+            ->join('roles', 'users.role_id', '=', 'roles.id')
+            ->join('divisions', 'users.division_id', '=', 'divisions.id')
+            ->select(
+                'users.name',
+                'users.nim',
+                'users.email',
+                'roles.name as role',
+                'divisions.name as division',
+                'users.is_accepted'
+            )
+            ->where('roles.name', 'Anggota')
+            ->get();
     }
 }

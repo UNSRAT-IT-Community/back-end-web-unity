@@ -10,6 +10,7 @@ use App\Http\Repositories\UserRepository;
 use App\Http\Repositories\UpcomingEventRepository; 
 use App\Http\Repositories\AnnouncementRepository;
 
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
