@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommunityAdController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\DivisionController;
 use App\Http\Controllers\UpcomingEventController;
@@ -34,26 +35,19 @@ Route::middleware('authorization')->group(function () {
         }
     );
 
-    Route::middleware('anggota')->group(function () {
-        Route::get('/anggota', function () {
-            return response()->json(['message' => 'Selamat Datang Anggota', 'user' => $GLOBALS['USER_DATA']->name]);
-        });
-        Route::get('/announcements', [AnnouncementController::class, 'index']);
-        Route::get('/announcements/{announcement}', [AnnouncementController::class, 'show']);
-    });
+    Route::post('/announcements', [AnnouncementController::class, 'store']);
+    Route::put('/announcements/{announcement}', [AnnouncementController::class, 'update']);
+    Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy']);
 
-    Route::middleware('pengurus')->group(function () {
-        Route::get('/pengurus', function () {
-            return response()->json(['message' => 'Selamat Datang Pengurus', 'user' => $GLOBALS['USER_DATA']->name]);
-        });
-        Route::post('/announcements', [AnnouncementController::class, 'store']);
-        Route::put('/announcements/{announcement}', [AnnouncementController::class, 'update']);
-        Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy']);
-        Route::get('/users', [UserController::class, 'index']);
-    });
     Route::get('/upcoming-event', [UpcomingEventController::class, 'getAllUpcomingEvents']);
     Route::post('/upcoming-event', [UpcomingEventController::class, 'create']);
 });
+
+Route::get('/community-ads', [CommunityAdController::class, 'index']);
+Route::get('/community-ads/{id}', [CommunityAdController::class, 'show']);
+
+Route::get('/announcements', [AnnouncementController::class, 'index']);
+Route::get('/announcements/{announcement}', [AnnouncementController::class, 'show']);
 
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
