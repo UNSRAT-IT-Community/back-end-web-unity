@@ -35,6 +35,8 @@ Route::middleware('authorization')->group(function () {
         }
     );
 
+    Route::get('/users', [UserController::class, 'index']);
+    
     Route::post('/announcements', [AnnouncementController::class, 'store']);
     Route::put('/announcements/{announcement}', [AnnouncementController::class, 'update']);
     Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy']);

@@ -52,7 +52,7 @@ class UserRepository implements UserRepositoryInterface
         return in_array($role, $allowedRoles) ? $role : null;
     }
 
-    public function getUserDataByRole()
+    public function getUserDataByRole(array $allowedRoles)
     {
         return DB::table('users')
             ->join('roles', 'users.role_id', '=', 'roles.id')
@@ -65,7 +65,8 @@ class UserRepository implements UserRepositoryInterface
                 'divisions.name as division',
                 'users.is_accepted'
             )
-            ->where('roles.name', 'Anggota')
+            ->whereIn('roles.name', $allowedRoles)
+            ->where('roles.name', 'member')
             ->get();
     }
 }
