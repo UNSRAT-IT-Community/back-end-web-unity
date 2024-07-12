@@ -41,7 +41,11 @@ Route::middleware('authorization')->group(function () {
     Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy']);
 
     Route::get('/upcoming-event', [UpcomingEventController::class, 'getAllUpcomingEvents']);
+    Route::get('/upcoming-event/{upcomingEventId}', [UpcomingEventController::class, 'getUpcomingEvent']);
     Route::post('/upcoming-event', [UpcomingEventController::class, 'create']);
+    Route::put('/upcoming-event/{upcomingEventId}',[UpcomingEventController::class, 'update']);
+    Route::delete('/upcoming-event/{upcomingEventId}',[UpcomingEventController::class, 'delete']);
+
 });
 
 Route::get('/community-ads', [CommunityAdController::class, 'index']);
