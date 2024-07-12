@@ -60,7 +60,43 @@ class CommunityAdController extends Controller
      */
     public function store(CreateCommunityAdRequest $request)
     {
+        $creatorId = $this->getUserIdFromToken($request);
 
+        $userData = $this->decodeToken($request);
+        if (!$userData) {
+            return $this->sendUnauthorizedResponse('Token tidak valid atau telah kadaluarsa');
+        }
+
+        $roleName = $this->userRepository->getRoleNameById($userData->role_id);
+        if ($roleName !== 'committee') {
+            return $this->sendForbiddenResponse('User tidak memiliki hak untuk menambah postingan iklan komunitas');
+        }
+
+        if (!$request->hasFile('image') && empty($request->content)) {
+            return response()->json([
+                'status' => 413,
+                'message' => 'Ukuran file melebihi batas maksimum yang diizinkan.',
+                'data' => null
+            ], 413);
+        }
+
+        try {
+            $imageUrl = $this->uploadImageToFirebase($request->file('image'), 'community-ads');
+
+            $data = [
+                'title' => $request->title,
+                'content' => $request->content,
+                'price' => $request->price,
+                'image_url' => $imageUrl,
+                'creator_id' => $creatorId
+            ];
+
+            $this->communityAdRepo->insertCommunityAds($data);
+
+            return $this->sendSuccessCreatedResponse(null, 'Berhasil membuat Iklan Komunitas');
+        } catch (\Exception $e) {
+            return $this->sendValidationErrorResponse($e->getMessage());
+        }
     }
 
     /**

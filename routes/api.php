@@ -36,6 +36,8 @@ Route::middleware('authorization')->group(function () {
         }
     );
 
+    Route::post('/community-ads', [CommunityAdController::class, 'store']);
+
     Route::post('/announcements', [AnnouncementController::class, 'store']);
     Route::put('/announcements/{announcement}', [AnnouncementController::class, 'update']);
     Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy']);

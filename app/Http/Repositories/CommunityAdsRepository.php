@@ -42,4 +42,17 @@ class CommunityAdsRepository implements CommunityAdsInterface
         ->where('community_ads.id', $uuid)
         ->get();
     }
+
+    public function insertCommunityAds($data){
+        return DB::table('community_ads')->insert([
+            'id' => Str::uuid(),
+            'title' => $data['title'],
+            'content' => $data['content'],
+            'image_url' => $data['image_url'],
+            'price' => $data['price'],
+            'creator_id' => $data['creator_id'],
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+    }
 }
