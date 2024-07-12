@@ -25,4 +25,5 @@ interface UserRepositoryInterface
     public function getUserById(string $id, array $columns = ['id', 'name', 'nim', 'email', 'profile_picture', 'role_id', 'division_id', 'is_accepted']): ?Model;
     public function getUserRoleById(string $userId): ?Model;
     public function getRoleNameById(string $roleId): ?string;
+    public function getUserDataByRole(array $allowedRoles);
 }
