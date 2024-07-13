@@ -21,7 +21,7 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        $role= Role::where("name", "Anggota")->first();
+        $role= Role::where("name", "committee")->first();
         $role_id = $role->id;
 
         try {

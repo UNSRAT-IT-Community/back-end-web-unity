@@ -3,16 +3,14 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommunityAdController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\DivisionController;
 use App\Http\Controllers\UpcomingEventController;
 use App\Http\Controllers\ValidationController;
-use App\Http\Requests\CreateUpcomingEventRequest; 
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\GalleryController;
-use App\Models\Role;
-use App\Models\User;
-use App\Models\Division;
-use App\Models\Gallery;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,22 +35,27 @@ Route::middleware('authorization')->group(function () {
         }
     );
 
-    Route::middleware('anggota')->group(function () {
-        Route::get('/anggota', function () {
-            return response()->json(['message' => 'Selamat Datang Anggota', 'user' => $GLOBALS['USER_DATA']->name]);
-        });
-    });
-
-    Route::middleware('pengurus')->group(function () {
-        Route::get('/pengurus', function () {
-            return response()->json(['message' => 'Selamat Datang Pengurus', 'user' => $GLOBALS['USER_DATA']->name]);
-        });
-        Route::delete('/galleries/{gallery}', [GalleryController::class, 'destroy']);
-    });
+    Route::get('/users', [UserController::class, 'index']);
+    
+    Route::post('/announcements', [AnnouncementController::class, 'store']);
+    Route::put('/announcements/{announcement}', [AnnouncementController::class, 'update']);
+    Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy']);
 
     Route::get('/upcoming-event', [UpcomingEventController::class, 'getAllUpcomingEvents']);
+    Route::get('/upcoming-event/{upcomingEventId}', [UpcomingEventController::class, 'getUpcomingEvent']);
     Route::post('/upcoming-event', [UpcomingEventController::class, 'create']);
+    Route::put('/upcoming-event/{upcomingEventId}',[UpcomingEventController::class, 'update']);
+    Route::delete('/upcoming-event/{upcomingEventId}',[UpcomingEventController::class, 'delete']);
+
+    Route::post('/gallery', [GalleryController::class, 'store']);
+    Route::delete('/gallery/{gallery}', [GalleryController::class, 'destroy']);
 });
+
+Route::get('/community-ads', [CommunityAdController::class, 'index']);
+Route::get('/community-ads/{id}', [CommunityAdController::class, 'show']);
+
+Route::get('/announcements', [AnnouncementController::class, 'index']);
+Route::get('/announcements/{announcement}', [AnnouncementController::class, 'show']);
 
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);

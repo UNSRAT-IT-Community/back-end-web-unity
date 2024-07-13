@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Http\Repositories;
 
 use App\Http\Interfaces\GalleryRepositoryInterface;
 use App\Models\Gallery;
@@ -16,28 +16,26 @@ class GalleryRepository implements GalleryRepositoryInterface
         $this->initializeFirebaseStorage();
     }
 
-    public function deleteGallery(Gallery $gallery)
+    public function createGallery(array $data)
     {
-        try {
-            $imageUrl = $gallery->url;
-            $this->deleteImageFromStorage($imageUrl);
-            $gallery->delete();
-
-            return true;
-        } catch (\Exception $e) {
-            return false;
+        if (isset($data['image'])) {
+            $data['photo_url'] = $this->uploadImageToFirebase($data['image'], 'gallery');
+            unset($data['image']);
         }
+        
+        if (!isset($data['photo_url'])) {
+            $data['photo_url'] = '';
+        }
+        
+        return Gallery::create($data);
     }
 
-    private function deleteImageFromStorage($imageUrl)
+    public function deleteGallery(Gallery $gallery)
     {
-        $bucket = $this->firebaseStorage->getBucket();
-        $object = $bucket->object($imageUrl);
-
-        if ($object->exists()) {
-            $object->delete();
-        } else {
-            throw new \Exception('Image not found in storage');
+        if ($gallery->photo_url) {
+            $oldFileName = basename(parse_url($gallery->photo_url, PHP_URL_PATH));
+            $this->firebaseStorage->getBucket()->object('gallery/' . $oldFileName)->delete();
         }
+        return $gallery->delete();
     }
 }
