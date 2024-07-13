@@ -17,9 +17,8 @@ class RoleSeeder extends Seeder
         DB::table('roles')->truncate(); 
 
         $roles = [
-            ['name' => 'member'],
-            ['name' => 'committee'],
-            ['name' => 'coordinator'],
+            ['name' => 'Anggota'],
+            ['name' => 'Pengurus'],
         ];
 
         foreach ($roles as $role) {

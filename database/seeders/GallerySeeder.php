@@ -16,7 +16,7 @@ class GallerySeeder extends Seeder
     {
         $eligibleUserIds = DB::table('users')
             ->join('roles', 'users.role_id', '=', 'roles.id')
-            ->whereIn('roles.name', ['coordinator', 'committee'])
+            ->whereIn('roles.name', ['Pengurus', 'Anggota'])
             ->where('users.is_accepted', 'accepted')
             ->pluck('users.id');
 

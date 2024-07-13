@@ -2,11 +2,13 @@
 
 namespace App\Providers;
 
-use App\Http\Interfaces\UpcomingEventRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
+use App\Http\Interfaces\UpcomingEventRepositoryInterface;
 use App\Http\Interfaces\UserRepositoryInterface;
+use App\Http\Interfaces\GalleryRepositoryInterface;
 use App\Http\Repositories\UserRepository;
-use App\Http\Repositories\UpcomingEventRepository; 
+use App\Http\Repositories\UpcomingEventRepository;
+use App\Http\Repositories\GalleryRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -17,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(UpcomingEventRepositoryInterface::class, UpcomingEventRepository::class);
+        $this->app->bind(GalleryRepositoryInterface::class, GalleryRepository::class);
     }
 
     /**
