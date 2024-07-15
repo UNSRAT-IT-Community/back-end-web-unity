@@ -11,6 +11,7 @@ use App\Traits\TokenTrait;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use App\Http\Requests\CreateCommunityAdRequest;
+use App\Http\Requests\UpdateCommunityAdRequest;
 
 class CommunityAdController extends Controller
 {
@@ -34,9 +35,8 @@ class CommunityAdController extends Controller
 
         try {
             $decoded = JWT::decode($token, new Key($publicKey, 'RS256'));
-            if (isset($decoded->data->id)) {
-                return $decoded->data->id;
-            }
+
+            if (isset($decoded->data->id)) return $decoded->data->id;
 
             throw new \Exception("Token tidak valid !");
         } catch (\Exception $e) {
@@ -52,7 +52,7 @@ class CommunityAdController extends Controller
     public function index()
     {
         $result =  $this->communityAdRepo->getAllCommunityAds();
-        return $this->sendSuccessResponse($result, 'Berhasil mendapatkan daftar Iklan Komunitas');
+        return $this->sendSuccessResponse($result, 'Berhasil mendapatkan daftar Iklan');
     }
 
     /**
@@ -63,14 +63,10 @@ class CommunityAdController extends Controller
         $creatorId = $this->getUserIdFromToken($request);
 
         $userData = $this->decodeToken($request);
-        if (!$userData) {
-            return $this->sendUnauthorizedResponse('Token tidak valid atau telah kadaluarsa');
-        }
+        if (!$userData) return $this->sendUnauthorizedResponse('Token tidak valid atau telah kadaluarsa');
 
         $roleName = $this->userRepository->getRoleNameById($userData->role_id);
-        if ($roleName !== 'committee') {
-            return $this->sendForbiddenResponse('User tidak memiliki hak untuk menambah postingan iklan komunitas');
-        }
+        if ($roleName !== 'committee') return $this->sendForbiddenResponse('User tidak memiliki hak untuk menambah postingan iklan komunitas');
 
         if (!$request->hasFile('image') && empty($request->content)) {
             return response()->json([
@@ -93,7 +89,7 @@ class CommunityAdController extends Controller
 
             $this->communityAdRepo->insertCommunityAds($data);
 
-            return $this->sendSuccessCreatedResponse(null, 'Berhasil membuat Iklan Komunitas');
+            return $this->sendSuccessCreatedResponse(null, 'Berhasil membuat Iklan');
         } catch (\Exception $e) {
             return $this->sendValidationErrorResponse($e->getMessage());
         }
@@ -105,30 +101,76 @@ class CommunityAdController extends Controller
     public function show($id)
     {
         $result =  $this->communityAdRepo->getCommunityAdsByUuid($id);
-        return $this->sendSuccessResponse($result, 'Berhasil mendapatkan Iklan Komunitas');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(CommunityAd $communityAd)
-    {
-        //
+        if(!$result) return $this->sendNotFoundResponse('Iklan tidak ditemukan');
+        return $this->sendSuccessResponse($result, 'Berhasil mendapatkan Iklan');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, CommunityAd $communityAd)
+    public function update(UpdateCommunityAdRequest $request, $id)
     {
-        //
+        $userData = $this->decodeToken($request);
+        if (!$userData) return $this->sendUnauthorizedResponse('Token tidak valid atau telah kadaluarsa');
+
+        $roleName = $this->userRepository->getRoleNameById($userData->role_id);
+        if ($roleName !== 'committee') return $this->sendForbiddenResponse('User tidak memiliki hak untuk menambah postingan iklan komunitas');
+
+        $communityAd = $this->communityAdRepo->getCommunityAdsByUuid($id);
+        if(!$communityAd) return $this->sendNotFoundResponse('Iklan tidak ditemukan');
+
+        if (!$request->hasFile('image') && empty($request->content)) {
+            return response()->json([
+                'status' => 413,
+                'message' => 'Ukuran file melebihi batas maksimum yang diizinkan.',
+                'data' => null
+            ], 413);
+        }
+
+        try {
+            $oldImageUrl = $communityAd->image_url;
+            $oldFilePath = $this->extractFilePathFromUrl($oldImageUrl);
+            $this->deleteImageFromFirebase($oldFilePath);
+            $newImageUrl = $request->hasFile('image') ? $this->uploadImageToFirebase($request->file('image'), 'community-ads', $oldImageUrl) : $oldImageUrl;
+
+            $data = [
+                'title' => $request->title,
+                'content' => $request->content,
+                'price' => $request->price,
+                'image_url' => $newImageUrl,
+            ];
+
+            $this->communityAdRepo->updateCommunityAds($id, $data);
+            return $this->sendSuccessCreatedResponse(null, 'Berhasil mengubah Iklan');
+        } catch (\Exception $e) {
+            return $this->sendValidationErrorResponse($e->getMessage());
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CommunityAd $communityAd)
+    public function destroy(Request $request, $id)
     {
-        //
+        try {
+            $userData = $this->decodeToken($request);
+            $roleName = $this->userRepository->getRoleNameById($userData->role_id);
+            if ($roleName !== 'committee') return $this->sendForbiddenResponse('User tidak memiliki hak untuk menghapus postingan iklan komunitas');
+
+            $communityAd = $this->communityAdRepo->getCommunityAdsByUuid($id);
+            if(!$communityAd) return $this->sendNotFoundResponse('Iklan tidak ditemukan');
+
+
+            if ($communityAd->image_url) {
+                $filePath = $this->extractFilePathFromUrl($communityAd->image_url);
+                $this->deleteImageFromFirebase($filePath);
+            }
+
+            $this->communityAdRepo->deleteCommunityAd($id);
+
+            return $this->sendSuccessResponse(null, 'Berhasil menghapus Iklan');
+        } catch (\Exception $e) {
+            return $this->sendInternalServerErrorResponse($e);
+        }
     }
 }

@@ -38,7 +38,6 @@ class AnnouncementRepository implements AnnouncementRepositoryInterface
             unset($data['image']);
         }
         
-        // Pastikan image_url tidak null
         if (!isset($data['image_url'])) {
             $data['image_url'] = '';
         }
@@ -48,7 +47,6 @@ class AnnouncementRepository implements AnnouncementRepositoryInterface
 
     public function updateAnnouncement(Announcement $announcement, array $data)
     {
-        // Hapus gambar lama jika ada gambar baru
         if (isset($data['image'])) {
             if ($announcement->image_url) {
                 $oldFileName = basename(parse_url($announcement->image_url, PHP_URL_PATH));
@@ -60,7 +58,7 @@ class AnnouncementRepository implements AnnouncementRepositoryInterface
         }
 
         if (!isset($data['image_url'])) {
-            $data['image_url'] = $announcement->image_url; // Pertahankan image_url yang lama jika tidak ada gambar baru
+            $data['image_url'] = $announcement->image_url;
         }
 
         $announcement->update($data);

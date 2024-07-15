@@ -5,8 +5,9 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Log;
 
-class CreateCommunityAdRequest extends FormRequest
+class UpdateCommunityAdRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,14 +16,10 @@ class CreateCommunityAdRequest extends FormRequest
     {
         return true;
     }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
+        Log::info('Validation data: ', $this->all());
+        
         return [
             'title' => 'required|string|max:255',
             'content' => 'required|string',

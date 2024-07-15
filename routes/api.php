@@ -9,9 +9,8 @@ use App\Http\Controllers\DivisionController;
 use App\Http\Controllers\UpcomingEventController;
 use App\Http\Controllers\ValidationController;
 use App\Http\Controllers\AnnouncementController;
-use App\Models\Role;
-use App\Models\User;
-use App\Models\Division;
+use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,14 +35,23 @@ Route::middleware('authorization')->group(function () {
         }
     );
 
+    Route::get('/users', [UserController::class, 'index']);
+
     Route::post('/community-ads', [CommunityAdController::class, 'store']);
+    Route::put('/community-ads/{id}', [CommunityAdController::class, 'update']);
+    // Route::patch('/community-ads/{id}', [CommunityAdController::class, 'update']);
+    Route::delete('/community-ads/{id}', [CommunityAdController::class, 'destroy']);
 
     Route::post('/announcements', [AnnouncementController::class, 'store']);
     Route::put('/announcements/{announcement}', [AnnouncementController::class, 'update']);
     Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy']);
 
     Route::get('/upcoming-event', [UpcomingEventController::class, 'getAllUpcomingEvents']);
+    Route::get('/upcoming-event/{upcomingEventId}', [UpcomingEventController::class, 'getUpcomingEvent']);
     Route::post('/upcoming-event', [UpcomingEventController::class, 'create']);
+    Route::put('/upcoming-event/{upcomingEventId}',[UpcomingEventController::class, 'update']);
+    Route::delete('/upcoming-event/{upcomingEventId}',[UpcomingEventController::class, 'delete']);
+
 });
 
 Route::get('/community-ads', [CommunityAdController::class, 'index']);
