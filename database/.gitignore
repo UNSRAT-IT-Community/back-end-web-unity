@@ -1,2 +1,3 @@
 *.sqlite*
 start.sh
+keyfile.json

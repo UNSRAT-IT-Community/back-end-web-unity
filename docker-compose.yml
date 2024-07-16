@@ -9,7 +9,6 @@ services:
             - "7001:80"
         volumes:
             - .:/app
-            - ~/start-scripts/back-end-web-unity/.:/app
         networks:
             - backend-webunity
         depends_on:
