@@ -43,6 +43,3 @@ RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
 
 # Set the default command to run the start script
 CMD ["/start.sh"]
-
-# Set permissions for the private and public keys
-RUN chown -R /app/private_key.pem /app/public_key.pem
