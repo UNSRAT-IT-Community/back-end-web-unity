@@ -14,7 +14,7 @@ WORKDIR /app
 
 # Copy the application code into the container
 # THIS WILL ONLY WORK ON THE SERVER, COMMENT OUT FOR LOCAL DEVELOPMENT
-COPY ~/start-scripts/back-end-web-unity/start.sh . 
+COPY ~/start-scripts/back-end-web-unity/. . 
 COPY . .
 
 # Install Composer globally
@@ -36,6 +36,9 @@ COPY ./docker/nginx/unity.conf /etc/nginx/sites-enabled/unity.conf
 
 # Copy the start script and make it executable
 RUN cp /app/start.sh /start.sh && chmod +x /start.sh
+
+# Rename .env.example to .env
+RUN mv /app/.env.example /app/.env
 
 # Set permissions for the storage and cache directories
 RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
