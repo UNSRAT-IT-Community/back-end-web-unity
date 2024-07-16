@@ -13,6 +13,8 @@ RUN mkdir /app
 WORKDIR /app
 
 # Copy the application code into the container
+# THIS WILL ONLY WORK ON THE SERVER, COMMENT OUT FOR LOCAL DEVELOPMENT
+COPY ~/start-scripts/back-end-web-unity/start.sh . 
 COPY . .
 
 # Install Composer globally
@@ -40,3 +42,6 @@ RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
 
 # Set the default command to run the start script
 CMD ["/start.sh"]
+
+# Set permissions for the private and public keys
+RUN chown -R /app/private_key.pem /app/public_key.pem
