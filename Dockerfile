@@ -14,7 +14,7 @@ WORKDIR /app
 
 # Copy the application code into the container
 # THIS WILL ONLY WORK ON THE SERVER, COMMENT OUT FOR LOCAL DEVELOPMENT
-COPY ~/start-scripts/back-end-web-unity/. . 
+COPY /start-scripts/back-end-web-unity/. . 
 COPY . .
 
 # Install Composer globally
