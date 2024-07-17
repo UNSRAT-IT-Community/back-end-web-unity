@@ -47,6 +47,11 @@ Route::middleware('authorization')->group(function () {
     Route::put('/upcoming-event/{upcomingEventId}',[UpcomingEventController::class, 'update']);
     Route::delete('/upcoming-event/{upcomingEventId}',[UpcomingEventController::class, 'delete']);
 
+    Route::get('/galleries', [GalleryController::class, 'getAllGallery']);
+    Route::get('/galleries/{id}', [GalleryController::class, 'getAllGallery']);
+    Route::post('/galleries', [GalleryController::class, 'create']);
+    Route::put('/galleries/{id}', [GalleryController::class, 'update']);
+
 });
 
 Route::get('/community-ads', [CommunityAdController::class, 'index']);
