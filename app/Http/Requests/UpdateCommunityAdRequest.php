@@ -19,7 +19,7 @@ class UpdateCommunityAdRequest extends FormRequest
     public function rules(): array
     {
         Log::info('Validation data: ', $this->all());
-        
+
         return [
             'title' => 'required|string|max:255',
             'content' => 'required|string',

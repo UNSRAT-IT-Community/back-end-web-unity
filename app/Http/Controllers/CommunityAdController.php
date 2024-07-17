@@ -63,18 +63,8 @@ class CommunityAdController extends Controller
         $creatorId = $this->getUserIdFromToken($request);
 
         $userData = $this->decodeToken($request);
-        if (!$userData) return $this->sendUnauthorizedResponse('Token tidak valid atau telah kadaluarsa');
-
         $roleName = $this->userRepository->getRoleNameById($userData->role_id);
         if ($roleName !== 'committee') return $this->sendForbiddenResponse('User tidak memiliki hak untuk menambah postingan iklan komunitas');
-
-        if (!$request->hasFile('image') && empty($request->content)) {
-            return response()->json([
-                'status' => 413,
-                'message' => 'Ukuran file melebihi batas maksimum yang diizinkan.',
-                'data' => null
-            ], 413);
-        }
 
         try {
             $imageUrl = $this->uploadImageToFirebase($request->file('image'), 'community-ads');
@@ -111,21 +101,11 @@ class CommunityAdController extends Controller
     public function update(UpdateCommunityAdRequest $request, $id)
     {
         $userData = $this->decodeToken($request);
-        if (!$userData) return $this->sendUnauthorizedResponse('Token tidak valid atau telah kadaluarsa');
-
         $roleName = $this->userRepository->getRoleNameById($userData->role_id);
         if ($roleName !== 'committee') return $this->sendForbiddenResponse('User tidak memiliki hak untuk menambah postingan iklan komunitas');
 
         $communityAd = $this->communityAdRepo->getCommunityAdsByUuid($id);
         if(!$communityAd) return $this->sendNotFoundResponse('Iklan tidak ditemukan');
-
-        if (!$request->hasFile('image') && empty($request->content)) {
-            return response()->json([
-                'status' => 413,
-                'message' => 'Ukuran file melebihi batas maksimum yang diizinkan.',
-                'data' => null
-            ], 413);
-        }
 
         try {
             $oldImageUrl = $communityAd->image_url;

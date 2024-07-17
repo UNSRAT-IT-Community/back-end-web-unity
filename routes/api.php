@@ -38,8 +38,7 @@ Route::middleware('authorization')->group(function () {
     Route::get('/users', [UserController::class, 'index']);
 
     Route::post('/community-ads', [CommunityAdController::class, 'store']);
-    Route::put('/community-ads/{id}', [CommunityAdController::class, 'update']);
-    // Route::patch('/community-ads/{id}', [CommunityAdController::class, 'update']);
+    Route::patch('/community-ads/{id}', [CommunityAdController::class, 'update']);
     Route::delete('/community-ads/{id}', [CommunityAdController::class, 'destroy']);
 
     Route::post('/announcements', [AnnouncementController::class, 'store']);
