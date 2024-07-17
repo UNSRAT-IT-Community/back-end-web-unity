@@ -35,6 +35,9 @@ COPY ./docker/nginx/unity.conf /etc/nginx/sites-enabled/unity.conf
 # Copy the start script and make it executable
 RUN cp /app/start.sh /start.sh && chmod +x /start.sh
 
+# Rename .env.example to .env
+RUN mv /app/.env.example /app/.env
+
 # Set permissions for the storage and cache directories
 RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
 

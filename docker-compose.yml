@@ -7,8 +7,6 @@ services:
             dockerfile: Dockerfile
         ports:
             - "7001:80"
-        env_file:
-            - .env
         volumes:
             - .:/app
         networks:
@@ -36,4 +34,4 @@ networks:
         driver: bridge
 
 volumes:
-  postgres-data:
+    postgres-data:
