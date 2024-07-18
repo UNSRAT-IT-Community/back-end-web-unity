@@ -42,13 +42,13 @@ Route::middleware('authorization')->group(function () {
     Route::delete('/community-ads/{id}', [CommunityAdController::class, 'destroy']);
 
     Route::post('/announcements', [AnnouncementController::class, 'store']);
-    Route::put('/announcements/{announcement}', [AnnouncementController::class, 'update']);
+    Route::patch('/announcements/{announcement}', [AnnouncementController::class, 'update']);
     Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy']);
 
     Route::get('/upcoming-event', [UpcomingEventController::class, 'getAllUpcomingEvents']);
     Route::get('/upcoming-event/{upcomingEventId}', [UpcomingEventController::class, 'getUpcomingEvent']);
     Route::post('/upcoming-event', [UpcomingEventController::class, 'create']);
-    Route::put('/upcoming-event/{upcomingEventId}',[UpcomingEventController::class, 'update']);
+    Route::patch('/upcoming-event/{upcomingEventId}',[UpcomingEventController::class, 'update']);
     Route::delete('/upcoming-event/{upcomingEventId}',[UpcomingEventController::class, 'delete']);
 
     Route::post('/gallery', [GalleryController::class, 'store']);
@@ -71,3 +71,5 @@ Route::post('/insert_role', [RoleController::class, 'insert']);
 Route::post('/insert_division', [DivisionController::class, 'insert']);
 
 Route::post('/auth/validation', [ValidationController::class, 'validateTokenService']);
+
+
