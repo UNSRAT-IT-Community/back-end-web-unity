@@ -51,6 +51,8 @@ Route::middleware('authorization')->group(function () {
     Route::put('/upcoming-event/{upcomingEventId}',[UpcomingEventController::class, 'update']);
     Route::delete('/upcoming-event/{upcomingEventId}',[UpcomingEventController::class, 'delete']);
 
+    Route::post('/gallery', [GalleryController::class, 'store']);
+    Route::delete('/gallery/{gallery}', [GalleryController::class, 'destroy']);
 });
 
 Route::get('/community-ads', [CommunityAdController::class, 'index']);
