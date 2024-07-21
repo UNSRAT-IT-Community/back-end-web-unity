@@ -33,7 +33,7 @@ trait FirebaseStorageTrait
             'name' => $firebasePath
         ]);
 
-        $expiresAt = new \DateTime('+1 hour'); 
+        $expiresAt = new \DateTime('+3 year'); 
         $signedUrl = $this->firebaseStorage->getBucket()->object($firebasePath)->signedUrl($expiresAt);
 
         return $signedUrl;

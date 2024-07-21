@@ -36,22 +36,26 @@ Route::middleware('authorization')->group(function () {
     );
 
     Route::get('/users', [UserController::class, 'index']);
-    
+
+    Route::post('/community-ads', [CommunityAdController::class, 'store']);
+    Route::patch('/community-ads/{id}', [CommunityAdController::class, 'update']);
+    Route::delete('/community-ads/{id}', [CommunityAdController::class, 'destroy']);
+
     Route::post('/announcements', [AnnouncementController::class, 'store']);
-    Route::put('/announcements/{announcement}', [AnnouncementController::class, 'update']);
+    Route::patch('/announcements/{announcement}', [AnnouncementController::class, 'update']);
     Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy']);
 
     Route::get('/upcoming-event', [UpcomingEventController::class, 'getAllUpcomingEvents']);
     Route::get('/upcoming-event/{upcomingEventId}', [UpcomingEventController::class, 'getUpcomingEvent']);
     Route::post('/upcoming-event', [UpcomingEventController::class, 'create']);
-    Route::put('/upcoming-event/{upcomingEventId}',[UpcomingEventController::class, 'update']);
+    Route::patch('/upcoming-event/{upcomingEventId}',[UpcomingEventController::class, 'update']);
     Route::delete('/upcoming-event/{upcomingEventId}',[UpcomingEventController::class, 'delete']);
 
-    Route::get('/galleries', [GalleryController::class, 'getAllGallery']);
-    Route::get('/galleries/{id}', [GalleryController::class, 'getAllGallery']);
-    Route::post('/galleries', [GalleryController::class, 'create']);
-    Route::put('/galleries/{id}', [GalleryController::class, 'update']);
-
+    Route::get('/gallery', [GalleryController::class, 'getAllGallery']);
+    Route::get('/gallery/{gallery}', [GalleryController::class, 'getAllGallery']);
+    Route::post('/gallery', [GalleryController::class, 'store']);
+    Route::patch('/gallery/{gallery}', [GalleryController::class, 'update']);
+    Route::delete('/gallery/{gallery}', [GalleryController::class, 'destroy']);
 });
 
 Route::get('/community-ads', [CommunityAdController::class, 'index']);
@@ -70,3 +74,5 @@ Route::post('/insert_role', [RoleController::class, 'insert']);
 Route::post('/insert_division', [DivisionController::class, 'insert']);
 
 Route::post('/auth/validation', [ValidationController::class, 'validateTokenService']);
+
+
