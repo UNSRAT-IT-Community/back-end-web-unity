@@ -1,7 +1,7 @@
 version: "3.8"
 services:
-    backend-app:
-        container_name: backend-app
+    backend-webunity:
+        container_name: backend-webunity
         build:
             context: .
             dockerfile: Dockerfile
@@ -10,12 +10,12 @@ services:
         volumes:
             - .:/app
         networks:
-            - backend-webunity
+            - backend-webunity-network
         depends_on:
-            - backend-db
+            - database-webunity
 
-    backend-db:
-        container_name: backend-db
+    database-webunity:
+        container_name: database-webunity
         image: postgres:16.3
         environment:
             POSTGRES_USER: postgres
@@ -26,11 +26,10 @@ services:
         volumes:
             - postgres-data:/var/lib/postgresql/data
         networks:
-            - backend-webunity
-        restart: always
+            - backend-webunity-network
 
 networks:
-    backend-webunity:
+    backend-webunity-network:
         driver: bridge
 
 volumes:

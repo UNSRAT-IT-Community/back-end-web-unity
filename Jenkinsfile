@@ -2,49 +2,38 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "back-end-web-unity"
-        CONTAINER_NAME = "${env.BUILD_NUMBER}-${new Date().format('yyyyMMdd-HHmmss')}-${IMAGE_NAME}"
+        DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials')
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the code from the GitHub repository
-                git url: 'git@github.com:UNSRAT-IT-Community/back-end-web-unity.git', branch: 'main'
+                checkout scm
             }
         }
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    // Build the Docker image
-                    sh "docker build -t ${IMAGE_NAME}:latest ."
-                }
-            }
-        }
-        stage('Update docker-compose.yml') {
-            steps {
-                script {
-                    // Update the docker-compose.yml file with the dynamic container name
-                    sh """
-                    sed -i 's/CONTAINER_NAME/${CONTAINER_NAME}/g' docker-compose.yml
-                    """
-                }
-            }
-        }
-        stage('Docker Compose') {
-            steps {
-                script {
-                    // Deploy using Docker Compose
-                    sh 'docker-compose up --build -d'
-                }
-            }
-        }
-    }
 
-    post {
-        always {
-            // Cleanup docker containers and images
-            sh 'docker-compose down'
+        stage('Build') {
+            steps {
+                script {
+                    def backendImage = docker.build("backend-webunity:latest")
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    sh 'docker-compose up -d --no-deps --build backend-webunity'
+                }
+            }
+        }
+
+        stage('Verify') {
+            steps {
+                script {
+                    sh 'docker-compose logs backend-webunity'
+                }
+            }
         }
     }
 }
