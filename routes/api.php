@@ -51,7 +51,10 @@ Route::middleware('authorization')->group(function () {
     Route::patch('/upcoming-event/{upcomingEventId}',[UpcomingEventController::class, 'update']);
     Route::delete('/upcoming-event/{upcomingEventId}',[UpcomingEventController::class, 'delete']);
 
+    Route::get('/gallery', [GalleryController::class, 'getAllGallery']);
+    Route::get('/gallery/{gallery}', [GalleryController::class, 'getAllGallery']);
     Route::post('/gallery', [GalleryController::class, 'store']);
+    Route::patch('/gallery/{gallery}', [GalleryController::class, 'update']);
     Route::delete('/gallery/{gallery}', [GalleryController::class, 'destroy']);
 });
 
