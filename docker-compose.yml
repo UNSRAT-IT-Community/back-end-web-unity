@@ -1,7 +1,6 @@
 version: "3.8"
 services:
-    backend-app:
-        container_name: backend-app
+    backend-webunity-app:
         build:
             context: .
             dockerfile: Dockerfile
@@ -13,9 +12,26 @@ services:
             - backend-webunity
         depends_on:
             - backend-db
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: on-failure
+            update_config:
+                delay: 10s
+                order: start-first
+                failure_action: rollback
+                monitor: 60s
+                max_failure_ratio: 0.3
+                parallelism: 1
+            resources:
+                limits:
+                    cpus: "0.25"
+                    memory: 768M
+                reservations:
+                    cpus: "0.25"
+                    memory: 768M
 
-    backend-db:
-        container_name: backend-db
+    backend-webunity-db:
         image: postgres:16.3
         environment:
             POSTGRES_USER: postgres
@@ -27,11 +43,21 @@ services:
             - postgres-data:/var/lib/postgresql/data
         networks:
             - backend-webunity
-        restart: always
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: on-failure
+            resources:
+                limits:
+                    cpus: "0.1"
+                    memory: 128M
+                reservations:
+                    cpus: "0.1"
+                    memory: 128M
 
 networks:
     backend-webunity:
-        driver: bridge
+        driver: overlay
 
 volumes:
     postgres-data:
