@@ -1,9 +1,7 @@
 version: "3.8"
 services:
     backend-webunity-app:
-        build:
-            context: .
-            dockerfile: Dockerfile
+        image: backend-webunity-app:latest
         ports:
             - "7001:80"
         volumes:
